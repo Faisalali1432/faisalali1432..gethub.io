@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spin Plan – Shadab Textile Mills (Unit 2)</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f1f4fa;--card:#ffffff;--ink:#1b2437;--muted:#5b667a;--head:#1F3864;--hdtxt:#1F3864;
+  --mid:#2E75B6;--light:#D9E2F3;--inbg:#FFF9DB;--inink:#0000cc;--outbg:#E2EFDA;--line:#c3cbda;
+  --warnbg:#fff3cd;--warnink:#664d03;--ok:#2e7d32;--bad:#b3261e;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1624;--card:#172036;--ink:#e6ebf5;--muted:#9aa6bd;--head:#2b4a80;--hdtxt:#c3d6fa;
+    --mid:#3d7fc0;--light:#22314f;--inbg:#3a3414;--inink:#9fc1ff;--outbg:#1f3a26;--line:#34405a;
+    --warnbg:#463a12;--warnink:#f3dc8c;--ok:#7bd88f;--bad:#ff8a80;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1624;--card:#172036;--ink:#e6ebf5;--muted:#9aa6bd;--head:#2b4a80;--hdtxt:#c3d6fa;
+  --mid:#3d7fc0;--light:#22314f;--inbg:#3a3414;--inink:#9fc1ff;--outbg:#1f3a26;--line:#34405a;
+  --warnbg:#463a12;--warnink:#f3dc8c;--ok:#7bd88f;--bad:#ff8a80;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.35}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--head);z-index:20}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--head);color:#fff;padding:10px 14px 8px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.bar .row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.ttl{font-size:22px;font-weight:700;letter-spacing:.5px}
+.ttl small{display:block;font-size:12px;font-weight:400;opacity:.85;letter-spacing:0}
+.ctl{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end}
+.ctl label{display:flex;flex-direction:column;font-size:11px;gap:2px;opacity:.95}
+.ctl input,.ctl select{font:inherit;font-size:13px;padding:5px 7px;border-radius:5px;border:1px solid var(--line);background:var(--card);color:var(--ink);min-width:150px}
+button{font:inherit;font-size:13px;font-weight:700;padding:7px 14px;border-radius:6px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;cursor:pointer}
+button.pri{background:#2e9e5b;border-color:#2e9e5b}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.armed{background:#c0392b;border-color:#c0392b}
+#status{margin-top:7px;font-size:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chip{padding:2px 9px;border-radius:99px;font-weight:700;font-size:11px;background:rgba(255,255,255,.18)}
+.chip.dirty{background:#f0b429;color:#2b2100}
+.chip.saved{background:#2e9e5b;color:#fff}
+.chip.ro{background:#6c7a99;color:#fff}
+#warn{margin-top:8px;background:var(--warnbg);color:var(--warnink);padding:8px 10px;border-radius:6px;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#warn[hidden]{display:none}
+#warn button{color:var(--warnink);border-color:var(--warnink);padding:4px 10px}
+main{max-width:1000px;margin:0 auto;padding:12px 12px 40px}
+.sec{background:var(--head);color:#fff;padding:7px 12px;font-weight:700;font-size:14px;border-radius:7px 7px 0 0;margin-top:16px}
+.sec span{font-weight:400;opacity:.85;font-size:12px;margin-left:6px}
+.card{background:var(--card);border:1px solid var(--line);border-top:0;border-radius:0 0 7px 7px;padding:8px}
+.wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+.tbl th,.tbl td{border:1px solid var(--line);padding:3px 5px;text-align:center;vertical-align:middle}
+.tbl thead th{background:var(--light);color:var(--hdtxt);font-size:11px;font-weight:700;white-space:pre-line}
+.tbl th.l{text-align:left;color:var(--hdtxt);font-weight:700;white-space:nowrap}
+.tbl td.u{color:var(--muted);font-size:11px}
+.tbl td.o{background:var(--outbg);font-weight:700}
+.tbl td.b{font-weight:700}
+.tbl input{width:100%;min-width:50px;font:inherit;font-size:13px;text-align:center;padding:3px 2px;background:var(--inbg);color:var(--inink);border:1px solid var(--line);border-radius:3px}
+.tbl input.tx{min-width:96px}
+.top{display:grid;grid-template-columns:1fr 210px;gap:10px}
+.kpis{display:grid;gap:8px;grid-template-rows:repeat(4,1fr)}
+.kpi{background:var(--head);color:#fff;border-radius:8px;text-align:center;padding:8px 6px;display:flex;flex-direction:column;justify-content:center}
+.kpi small{font-size:10px;font-weight:700;letter-spacing:.6px;opacity:.85}
+.kpi b{font-size:26px;line-height:1.1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.leg{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;margin-top:10px}
+.leg span{padding:3px 10px;border-radius:5px;border:1px solid var(--line)}
+.leg .i{background:var(--inbg);color:var(--inink);font-weight:700}
+.leg .c{background:var(--outbg);font-weight:700}
+.note{font-size:12px;color:var(--muted);margin:10px 2px}
+details{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:7px}
+summary{cursor:pointer;padding:10px 12px;font-weight:700;color:var(--hdtxt)}
+details .in{padding:0 14px 12px;font-size:13px}
+.flow{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
+.flow b{background:var(--mid);color:#fff;padding:6px 10px;border-radius:5px;font-size:12px}
+.flow b.y{background:#3f8a3f}
+dl{display:grid;grid-template-columns:150px 1fr;gap:5px 12px;margin:8px 0}
+dt{font-weight:700;color:var(--hdtxt)}
+dd{margin:0}
+.sign{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:22px}
+.sign div{border-top:1px solid var(--hdtxt);text-align:center;padding-top:3px;font-size:12px;font-weight:700;color:var(--hdtxt)}
+@media (max-width:760px){
+  .top,.two{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  dl{grid-template-columns:1fr}
+  .ctl input,.ctl select{min-width:130px}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="row">
+    <div class="ttl">SPIN PLAN<small>Shadab Textile Mills Ltd. – Unit 2</small></div>
+    <div class="ctl">
+      <label>Plan date<input type="date" data-p="date" data-t="text" id="dateIn"></label>
+      <label>Saved plans<select id="sel"><option value="">Working copy (not saved)</option></select></label>
+      <button id="save" class="pri" disabled>Save plan</button>
+      <button id="del" disabled>Delete</button>
+    </div>
+  </div>
+  <div id="status"><span class="chip ro" id="chip">Loading…</span><span id="msg"></span></div>
+  <div id="warn" hidden></div>
+</header>
+
+<main id="app"></main>
+
+<script>
+/* ---------- default plan (template for a new day) ---------- */
+var DEF = {
+  date: "2026-10-30",
+  spin: { count:["20/1","30/1","20/1"], actual:[19.5,30,20.2], speed:[475,460,460], eff:[0.96,0.96,0.96], machines:[1,3,2], spm:[96,96,96] },
+  pv: { cards:"5, 6, 7, 8, 9", st:[
+    {m:"RSB D-26",exc:0.02,gr:60,eff:0.9,del:2,hrs:23},
+    {m:"Tianmen-3807",exc:0.02,gr:65,eff:0.9,del:4,hrs:18},
+    {m:"Tianmen-3807",exc:0.02,gr:65,eff:0.9,del:4,hrs:18},
+    {m:"PV 65:35 · 80 gr/yd",exc:0.02,gr:80,eff:0.95,del:5,hrs:19} ]},
+  pa: { cards:"1, 2, 3, 4", st:[
+    {m:"RSB D-26",exc:0.02,gr:60,eff:0.9,del:2,hrs:20},
+    {m:"Tianmen-3807",exc:0.02,gr:65,eff:0.9,del:2,hrs:20},
+    {m:"Tianmen-3807",exc:0.02,gr:65,eff:0.9,del:2,hrs:20},
+    {m:"PA 70:30 · 80 gr/yd",exc:0.02,gr:80,eff:0.95,del:4,hrs:18.7} ]},
+  as: { yield:0.973, kgbag:45.36, polyBale:350.55, viscBale:287 },
+  raw: { usa:0, brazil:0 },
+  bl: [
+    {n:"P/C",f1:"Ibrahim Polyester",s1:0.52,r1:98,f2:"Cotton",s2:0.48,r2:87},
+    {n:"P/V",f1:"Ibrahim Polyester",s1:0.65,r1:98,f2:"Viscose",s2:0.35,r2:96},
+    {n:"CVC",f1:"Ibrahim Polyester",s1:0.4,r1:98,f2:"Cotton",s2:0.6,r2:87} ]
+};
+var STAGE = ["FINISHER","INTER","BREAKER","CARDING"];
+
+/* ---------- helpers ---------- */
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function getP(o,p){ return p.split(".").reduce(function(a,k){ return a==null?a:a[k]; },o); }
+function setP(o,p,v){ var k=p.split("."), last=k.pop(); var t=k.reduce(function(a,x){return a[x];},o); t[last]=v; }
+function merge(base,over){
+  if(Array.isArray(base)){ return Array.isArray(over)?over:base; }
+  if(base && typeof base==="object"){
+    var r={}; for(var k in base){ r[k]=merge(base[k], over?over[k]:undefined); } return r;
+  }
+  return (over===undefined||over===null)?base:over;
+}
+function f(n,d){ return (typeof n==="number" && isFinite(n)) ? n.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d}) : "—"; }
+function fmtDate(s){ var d=new Date(s+"T00:00:00"); return isNaN(d)?s:d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}); }
+function sum(a){ return a.reduce(function(x,y){return x+y;},0); }
+
+/* ---------- calculations (same formulas as the Excel plan) ---------- */
+function calc(p){
+  var o={}, s=p.spin, R=[0,1,2];
+  var ops=R.map(function(i){return ((s.speed[i]*1.0936*60*8)/(840*s.actual[i])*s.eff[i])*16;});
+  var tot=R.map(function(i){return s.machines[i]*s.spm[i];});
+  var lbs=R.map(function(i){return ops[i]*3*tot[i]/16;});
+  var bags=lbs.map(function(x){return x/100;});
+  R.forEach(function(i){
+    o["ops"+i]=f(ops[i],2); o["tot"+i]=f(tot[i],0); o["lbs"+i]=f(lbs[i],0);
+    o["lps"+i]=f(lbs[i]/tot[i],2); o["bags"+i]=f(bags[i],2);
+  });
+  var totBags=sum(bags), totSpd=sum(tot), totLbs=sum(lbs);
+  o.avgCount=f((s.actual[0]*bags[0]+s.actual[1]*bags[1]+s.actual[2]*bags[2])/totBags,2);
+  o.avgOps=f(totBags*100*16/totSpd/3,2);
+  o.totMach=f(sum(s.machines),0); o.totSpd=f(totSpd,0); o.totLbs=f(totLbs,0);
+  o.lpsAvg=f(totLbs/totSpd,2); o.totBags=f(totBags,2);
+  var pvTot=bags[0]+bags[1], paTot=bags[2];
+  o.pvTot=f(pvTot,2); o.paTot=f(paTot,2); o.allTot=f(pvTot+paTot,2);
+
+  var outs={pv:[],pa:[]};
+  function chain(key,start){
+    var prev=start, st=p[key].st;
+    st.forEach(function(x,i){
+      var req=(1+x.exc)*prev;
+      var spd=700000*req/(x.hrs*x.del*x.eff*60*1.0936*x.gr);
+      var out=(x.gr*spd*x.eff*x.del*x.hrs*60*1.0936)/700000;
+      o[key+"req"+i]=f(req,2); o[key+"spd"+i]=f(spd,1); o[key+"out"+i]=f(out,2);
+      if(i===3){ o[key+"kgph"]=f(x.gr*spd*60/15432,1); }
+      outs[key].push(out); prev=out;
+    });
+  }
+  chain("pv",pvTot); chain("pa",paTot);
+  for(var i=0;i<4;i++){
+    o["cdel"+i]=f(p.pv.st[i].del+p.pa.st[i].del,0);
+    o["cbags"+i]=f(outs.pv[i]+outs.pa[i],2);
+  }
+  var pp=totBags/p.as.yield, kg=pp*p.as.kgbag;
+  var poly=kg/p.as.polyBale*p.bl[1].s1, visc=kg/p.as.viscBale*p.bl[1].s2;
+  o.pp=f(pp,2); o.kg=f(kg,0); o.poly=f(poly,2); o.visc=f(visc,2);
+  o.totalBales=f(poly+visc+p.raw.usa+p.raw.brazil,1);
+  p.bl.forEach(function(b,i){
+    o["br"+i]=f(b.s1*b.r1+b.s2*b.r2,2);
+    o["bc"+i]=Math.abs(b.s1+b.s2-1)<1e-4 ? "OK ✔" : "CHECK ✖";
+  });
+  return o;
+}
+
+/* ---------- page markup ---------- */
+function I(path,opt){
+  opt=opt||{};
+  var t=opt.t||"num", sc=opt.sc||1;
+  return '<input class="'+(t==="text"?"tx":"")+'" data-p="'+path+'" data-t="'+t+'"'+(sc!==1?' data-sc="'+sc+'"':'')+
+         (t==="num"?' type="number" step="any" inputmode="decimal"':' type="text"')+'>';
+}
+function O(key,cls){ return '<span data-o="'+key+'"></span>'; }
+
+function stageTable(key,title){
+  var rows=STAGE.map(function(nm,i){
+    var b="st."+i, P=key+"."+b;
+    return '<tr><th class="l">'+nm+'</th><td>'+I(P+".m",{t:"text"})+'</td>'+
+      '<td>'+I(P+".exc",{sc:100})+'</td>'+
+      '<td class="b">'+O(key+"req"+i)+'</td>'+
+      '<td>'+I(P+".gr")+'</td>'+
+      '<td class="b">'+O(key+"spd"+i)+'</td>'+
+      '<td>'+I(P+".eff",{sc:100})+'</td>'+
+      '<td>'+I(P+".del")+'</td>'+
+      '<td>'+I(P+".hrs")+'</td>'+
+      '<td class="o">'+O(key+"out"+i)+'</td></tr>';
+  }).join("");
+  return '<div class="sec">'+title+'<span>works backwards from the spinning bags</span></div><div class="card"><div class="wrap">'+
+  '<table class="tbl" style="min-width:720px"><thead><tr><th>PROCESS</th><th>MACHINE</th><th>WASTE\n(EXCESS) %</th><th>REQUIRED\nBAGS/DAY</th><th>GRAINS\n/ YARD</th><th>SPEED\nm/min</th><th>EFFICIENCY\n%</th><th>DELIVERIES\n/ CARDS</th><th>HOURS\n/ DAY</th><th>BAGS/DAY\nOUTPUT</th></tr></thead><tbody>'+
+  rows+
+  '<tr><th class="l" colspan="2">CARDS USED (NOS.)</th><td colspan="3">'+I(key+".cards",{t:"text"})+'</td><th class="l" colspan="4" style="text-align:right">CARD OUTPUT (KG / HOUR)</th><td class="o">'+O(key+"kgph")+'</td></tr>'+
+  '</tbody></table></div></div>';
+}
+
+function build(){
+  var C3=[0,1,2];
+  function rowIn(label,unit,path,opt,tot){
+    return '<tr><th class="l">'+label+'</th><td class="u">'+unit+'</td>'+
+      C3.map(function(i){return '<td>'+I(path+"."+i,opt)+'</td>';}).join("")+
+      '<td class="b">'+(tot||"—")+'</td></tr>';
+  }
+  function rowOut(label,unit,key,tot,cls){
+    return '<tr><th class="l">'+label+'</th><td class="u">'+unit+'</td>'+
+      C3.map(function(i){return '<td class="'+(cls||"")+'">'+O(key+i)+'</td>';}).join("")+
+      '<td class="'+(cls||"b")+'">'+(tot||"—")+'</td></tr>';
+  }
+  var h='';
+  h+='<div class="sec">1.  RING SPINNING<span>MVS frames – decides how much yarn the mill makes</span></div><div class="card"><div class="top"><div class="wrap">'+
+  '<table class="tbl"><thead><tr><th>PARAMETER</th><th>UNIT</th><th colspan="2">P/V 65:35</th><th>P/A 70:30</th><th>TOTAL / AVG</th></tr></thead><tbody>'+
+  rowIn("Count (target)","Ne","spin.count",{t:"text"})+
+  rowIn("Actual count","Ne","spin.actual",{},O("avgCount"))+
+  rowIn("Spindle speed","rpm","spin.speed")+
+  rowIn("Efficiency","%","spin.eff",{sc:100})+
+  rowOut("OPS","oz/spdl/shift","ops",O("avgOps"))+
+  rowIn("No. of machines","nos","spin.machines",{},O("totMach"))+
+  rowIn("Spindles / machine","nos","spin.spm")+
+  rowOut("Total spindles","nos","tot",O("totSpd"))+
+  rowOut("Production","lbs/day","lbs",O("totLbs"))+
+  rowOut("Lbs / spindle","lbs/day","lps",O("lpsAvg"))+
+  rowOut("Production","bags/day","bags",O("totBags"),"o")+
+  '<tr><th class="l">Blend total</th><td class="u">bags/day</td><td class="o" colspan="2">'+O("pvTot")+'</td><td class="o">'+O("paTot")+'</td><td class="o">'+O("allTot")+'</td></tr>'+
+  '</tbody></table></div>'+
+  '<div class="kpis">'+
+   '<div class="kpi"><small>TOTAL SPINDLES</small><b>'+O("totSpd")+'</b></div>'+
+   '<div class="kpi"><small>AVERAGE COUNT (Ne)</small><b>'+O("avgCount")+'</b></div>'+
+   '<div class="kpi"><small>YARN BAGS / DAY (24 hrs)</small><b>'+O("totBags")+'</b></div>'+
+   '<div class="kpi"><small>TOTAL BALES REQUIRED</small><b>'+O("totalBales")+'</b></div>'+
+  '</div></div></div>';
+
+  h+=stageTable("pv","2.  PREPARATORY &amp; CARDING – P/V 65:35");
+  h+=stageTable("pa","3.  PREPARATORY &amp; CARDING – P/A 70:30");
+
+  var comb=STAGE.map(function(nm,i){
+    return '<tr><th class="l">'+nm+'</th><td class="b">'+O("cdel"+i)+'</td><td class="o">'+O("cbags"+i)+'</td></tr>';
+  }).join("");
+  h+='<div class="two"><div><div class="sec">4.  COMBINED (P/V + P/A)</div><div class="card"><div class="wrap"><table class="tbl" style="min-width:0"><thead><tr><th>PROCESS</th><th>DELIVERIES\n/ CARDS</th><th>BAGS/DAY</th></tr></thead><tbody>'+comb+'</tbody></table></div></div></div>'+
+  '<div><div class="sec">5.  RAW MATERIAL REQUIRED</div><div class="card"><div class="wrap"><table class="tbl" style="min-width:0"><thead><tr><th>ITEM</th><th>QUANTITY</th><th>UNIT</th></tr></thead><tbody>'+
+  '<tr><th class="l">Required PP bags</th><td class="b">'+O("pp")+'</td><td class="u">bags</td></tr>'+
+  '<tr><th class="l">Required PP in kg</th><td class="b">'+O("kg")+'</td><td class="u">kg</td></tr>'+
+  '<tr><th class="l">Polyester bales (Ibrahim)</th><td class="b">'+O("poly")+'</td><td class="u">bales</td></tr>'+
+  '<tr><th class="l">Viscose bales</th><td class="b">'+O("visc")+'</td><td class="u">bales</td></tr>'+
+  '<tr><th class="l">USA cotton bales</th><td>'+I("raw.usa")+'</td><td class="u">bales</td></tr>'+
+  '<tr><th class="l">Brazil cotton bales</th><td>'+I("raw.brazil")+'</td><td class="u">bales</td></tr>'+
+  '<tr><th class="l">TOTAL BALES</th><td class="o">'+O("totalBales")+'</td><td class="u">bales</td></tr>'+
+  '</tbody></table></div></div></div></div>';
+
+  h+='<div class="sec">ASSUMPTIONS<span>editable</span></div><div class="card"><div class="wrap"><table class="tbl" style="min-width:0"><tbody>'+
+  '<tr><th class="l">Yield (yarn ÷ raw material) %</th><td>'+I("as.yield",{sc:100})+'</td><th class="l">Kg per bag (100 lbs)</th><td>'+I("as.kgbag")+'</td></tr>'+
+  '<tr><th class="l">Polyester bale weight (kg)</th><td>'+I("as.polyBale")+'</td><th class="l">Viscose bale weight (kg)</th><td>'+I("as.viscBale")+'</td></tr>'+
+  '</tbody></table></div></div>';
+
+  var bl=[0,1,2].map(function(i){
+    var P="bl."+i;
+    return '<tr><th class="l">'+I(P+".n",{t:"text"})+'</th><td>'+I(P+".f1",{t:"text"})+'</td><td>'+I(P+".s1",{sc:100})+'</td><td>'+I(P+".r1")+'</td>'+
+      '<td>'+I(P+".f2",{t:"text"})+'</td><td>'+I(P+".s2",{sc:100})+'</td><td>'+I(P+".r2")+'</td>'+
+      '<td class="o">'+O("br"+i)+'</td><td class="b">'+O("bc"+i)+'</td></tr>';
+  }).join("");
+  h+='<div class="sec">6.  BLEND COST<span>rate per kg</span></div><div class="card"><div class="wrap"><table class="tbl" style="min-width:720px"><thead><tr><th>BLEND</th><th>FIBRE 1</th><th>SHARE %</th><th>RATE</th><th>FIBRE 2</th><th>SHARE %</th><th>RATE</th><th>BLENDED\nRATE</th><th>SHARES\nCHECK</th></tr></thead><tbody>'+bl+'</tbody></table></div></div>';
+
+  h+='<div class="leg"><span class="i">Blue on yellow = type your input</span><span class="c">Green = calculated automatically</span></div>';
+  h+='<p class="note">Each step adds the waste % so enough material is fed forward. Speeds are the speeds each machine must run to deliver the required bags – check them against machine limits. Raw material uses the 65:35 polyester / viscose split for the total bags, as in the original plan.</p>';
+  h+='<div class="sign"><div>QM</div><div>MM</div><div>TD</div><div>ASM</div><div>TM</div></div>';
+
+  h+='<details><summary>How to read this plan</summary><div class="in">'+
+  '<p>The plan is worked <b>backwards</b>: decide how much yarn the ring frames make, then every earlier machine must supply that much material (plus waste). The page then shows the speed each machine must run and how many bales to open.</p>'+
+  '<div class="flow"><b>BALES</b><b>CARDING</b><b>BREAKER</b><b>INTER</b><b>FINISHER</b><b>RING SPINNING</b><b class="y">YARN</b></div>'+
+  '<p style="margin:0;color:var(--muted)">Material moves left → right. The plan is calculated right → left.</p>'+
+  '<dl>'+
+  '<dt>Count</dt><dd>Thickness of the yarn. A bigger number means finer yarn. Actual count is what is really being made.</dd>'+
+  '<dt>Efficiency %</dt><dd>Share of time a machine really runs. 96% means about 4% lost to stops and breakages.</dd>'+
+  '<dt>OPS</dt><dd>Ounces of yarn one spindle makes in one 8-hour shift.</dd>'+
+  '<dt>Bag</dt><dd>One bag = 100 lbs of yarn, so bags/day = lbs/day ÷ 100.</dd>'+
+  '<dt>Waste (Excess) %</dt><dd>Extra material added at each step so the next machine is never short.</dd>'+
+  '<dt>Grains / yard</dt><dd>Weight of sliver per yard.</dd>'+
+  '<dt>Speed m/min</dt><dd>A result, not a setting: the speed needed to meet the requirement. Compare it with the machine’s safe maximum.</dd>'+
+  '<dt>Tip</dt><dd>Change one number at a time (a machine count, an efficiency) and watch what moves. If a speed is too high, add a delivery, a card or running hours.</dd>'+
+  '</dl></div></details>';
+  document.getElementById("app").innerHTML=h;
+}
+
+/* ---------- state, fill and update ---------- */
+var plan=clone(DEF), savedJSON=null, loadedId=null, plans=[];
+var db=null, canWrite=false, dbNote="", pendingLoad=null, delArmed=false, replArmed=false;
+var $=function(id){return document.getElementById(id);};
+
+function fill(){
+  document.querySelectorAll("[data-p]").forEach(function(el){
+    var v=getP(plan,el.dataset.p);
+    if(el.dataset.t!=="text"){ v=Math.round(v*(+el.dataset.sc||1)*1e6)/1e6; }
+    el.value=(v===undefined||v===null)?"":v;
+  });
+}
+function update(){
+  var o=calc(plan);
+  document.querySelectorAll("[data-o]").forEach(function(el){
+    var t=o[el.dataset.o]; el.textContent=(t===undefined)?"":t;
+    if(el.dataset.o.indexOf("bc")===0){ el.style.color=t.indexOf("OK")===0?"var(--ok)":"var(--bad)"; }
+  });
+  status();
+}
+function isDirty(){ return JSON.stringify(plan)!==savedJSON; }
+
+function status(){
+  var chip=$("chip"), msg=$("msg"), dirty=isDirty();
+  if(!db){ chip.className="chip ro"; chip.textContent="Local only"; msg.textContent=dbNote||"Saving is not available in this view. You can still try what-if changes."; }
+  else if(!canWrite){ chip.className="chip ro"; chip.textContent="View only"; msg.textContent="You can open saved plans and try what-if changes; only editors can save."; }
+  else if(dirty){ chip.className="chip dirty"; chip.textContent="Unsaved changes"; msg.textContent=loadedId?("Editing plan of "+fmtDate(loadedId)):"Working copy – press Save plan to keep it."; }
+  else { chip.className="chip saved"; chip.textContent="Saved"; msg.textContent="Plan of "+fmtDate(plan.date)+" is stored."; }
+  $("save").disabled=!(db&&canWrite&&dirty);
+  $("del").disabled=!(db&&canWrite&&loadedId&&plans.some(function(p){return p.id===loadedId;}));
+  if(!delArmed){ $("del").textContent="Delete"; $("del").classList.remove("armed"); }
+  if(!replArmed){ $("save").textContent="Save plan"; }
+}
+
+function renderList(){
+  var sel=$("sel"), keep=loadedId||"";
+  var h='<option value="">Working copy (not saved)</option>';
+  plans.forEach(function(p){
+    var t=""; try{ t=" · saved "+new Date(p.savedAt).toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}); }catch(e){}
+    h+='<option value="'+p.id+'">'+fmtDate(p.date||p.id)+t+'</option>';
+  });
+  sel.innerHTML=h; sel.value=plans.some(function(p){return p.id===keep;})?keep:"";
+}
+
+function openPlan(id){
+  var d=plans.filter(function(p){return p.id===id;})[0];
+  if(!d) return;
+  plan=merge(DEF,clone(d.data)); plan.date=d.date||id;
+  loadedId=id; savedJSON=JSON.stringify(plan); pendingLoad=null; $("warn").hidden=true;
+  delArmed=false; replArmed=false;
+  fill(); update(); renderList();
+}
+
+/* ---------- events ---------- */
+document.addEventListener("input",function(e){
+  var el=e.target; if(!el.dataset||!el.dataset.p) return;
+  var v;
+  if(el.dataset.t==="text"){ v=el.value; }
+  else { v=parseFloat(el.value); if(!isFinite(v)) v=0; v=v/(+el.dataset.sc||1); }
+  setP(plan,el.dataset.p,v);
+  if(el.dataset.p==="date"){ replArmed=false; }
+  update();
+});
+
+$("sel").addEventListener("change",function(){
+  var id=this.value;
+  if(!id){ this.value=loadedId||""; return; }
+  if(isDirty()){
+    pendingLoad=id; var w=$("warn"); w.hidden=false;
+    w.innerHTML='<span>Discard unsaved changes and open the plan of '+fmtDate(id)+'?</span>'+
+      '<button id="wy">Discard &amp; open</button><button id="wn">Keep editing</button>';
+    $("wy").onclick=function(){ openPlan(pendingLoad); };
+    $("wn").onclick=function(){ pendingLoad=null; w.hidden=true; renderList(); };
+  } else { openPlan(id); }
+});
+
+$("save").addEventListener("click",async function(){
+  if(!db||!canWrite) return;
+  var id=plan.date;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(id||"")){ $("msg").textContent="Please choose a valid plan date first."; return; }
+  var exists=plans.some(function(p){return p.id===id;});
+  if(exists && loadedId!==id && !replArmed){
+    replArmed=true; this.textContent="Replace plan of "+fmtDate(id)+"?"; return;
+  }
+  replArmed=false; this.disabled=true; this.textContent="Saving…";
+  try{
+    await db.doc("plans/"+id).set({date:id,data:clone(plan),savedAt:new Date().toISOString(),version:1});
+    loadedId=id; savedJSON=JSON.stringify(plan);
+    renderList(); this.textContent="Save plan"; status();
+  }catch(err){
+    this.textContent="Save plan";
+    if(err&&(err.code==="invalid_argument"||err.code==="revoked")){ canWrite=false; }
+    $("msg").textContent="Could not save ("+((err&&err.code)||"error")+"). Your changes are still on screen.";
+    this.disabled=false;
+  }
+});
+
+$("del").addEventListener("click",async function(){
+  if(!db||!canWrite||!loadedId) return;
+  if(!delArmed){
+    delArmed=true; this.textContent="Confirm delete?"; this.classList.add("armed");
+    setTimeout(function(){ delArmed=false; status(); },4000); return;
+  }
+  delArmed=false;
+  try{
+    await db.doc("plans/"+loadedId).delete();
+    loadedId=null; savedJSON=null; renderList(); update();
+  }catch(err){ $("msg").textContent="Could not delete ("+((err&&err.code)||"error")+")."; }
+});
+
+/* ---------- start ---------- */
+build(); fill(); update();
+
+(async function(){
+  var use=window.claude&&window.claude.use;
+  if(!use){ dbNote="Open this page from its claude.ai link to use saved plans."; status(); return; }
+  try{
+    var user=await window.claude.use("user");
+    db=await window.claude.use("db");
+    canWrite=!!(db&&user&&user.canEdit&&user.canEdit());
+  }catch(e){ db=null; }
+  if(!db){ dbNote="Sign in to claude.ai to open the saved plans."; status(); return; }
+  var first=true;
+  db.collection("plans").orderBy("date","desc").limit(400).onSnapshot(function(snap){
+    plans=snap.docs.map(function(d){ var x=d.data(); return {id:d.id,date:x.date,data:x.data,savedAt:x.savedAt}; });
+    renderList();
+    if(first){ first=false; if(!loadedId && plans.length && !isDirty()){ openPlan(plans[0].id); return; } }
+    status();
+  },function(err){ $("msg").textContent="Could not load saved plans ("+((err&&err.code)||"error")+")."; });
+  status();
+})();
+</script>
+</body>
+</html>
